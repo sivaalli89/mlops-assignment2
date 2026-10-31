@@ -1,5 +1,19 @@
 # Feature Store + ML Pipeline (athletes.csv)
 
+## Assignment
+**Goal:** design a Feature Store with an ML Pipeline, using `athletes.csv`.
+
+1. Set up an ML pipeline in any MLOps platform of your choice.
+2. Use a feature store with the ML pipeline.
+3. Load the data and create features with different versions.
+4. Run experiments with the ML pipeline and feature store.
+5. Create **2 different versions** of the features.
+6. Train the **same algorithm** with **2 different sets of hyperparameters** and the 2 feature versions (so **4 combinations**). Do not use AutoML to select the algorithm.
+7. Compare the results of the experiments both **quantitatively** (model metrics) and **qualitatively** (model plots).
+8. Compare the **carbon emissions** of the different experiments.
+9. Submit working code for the above through a GitHub repo.
+
+## Overview
 Predict an athlete's `deadlift` with a `RandomForestRegressor` (chosen by hand, no AutoML).
 4 experiments = 2 feature versions x 2 hyperparameter sets, compared on metrics, plots and carbon.
 
