@@ -22,10 +22,18 @@ conda create -n mlops python=3.11
 conda activate mlops
 pip install -r requirements.txt
 jupyter notebook local_pipeline.ipynb      # run all cells from the repo root
-mlflow ui                                  # optional: browse runs at http://localhost:5000
+mlflow ui --port 5055                      # optional: browse runs at http://localhost:5055
 ```
-`data/athletes.csv` must be present. Outputs go to `results/`.
+`data/athletes.csv` must be present.
 (The notebook creates `feature_repo/`, where Feast keeps its config, parquet files and registry.)
+
+## MLflow reference
+Every run is tracked in the `athletes-deadlift` experiment. Each run logs the feature version, the
+hyperparameters, the metrics (RMSE, MAE, R²) and the carbon emissions (`emissions_kg`).
+The screenshot below is the MLflow UI listing the runs (a run name appears more than once because the
+notebook was run several times).
+
+![MLflow UI showing the athletes-deadlift runs](images/mlflow_runs.png)
 
 ## Run on Databricks
 1. Upload `athletes.csv` to `/Volumes/workspace/default/raw/`.
@@ -39,17 +47,23 @@ mlflow ui                                  # optional: browse runs at http://loc
 | v2_HP-A | 36.60 | 27.88 | 0.855 | 3.8e-06 |
 | v2_HP-B | 36.04 | 27.47 | 0.859 | 1.0e-05 |
 
-The table is saved to `results/comparison.csv`. The plots (predicted vs actual, residuals and feature
+The plots (predicted vs actual, residuals and feature
 importance for each run, plus the RMSE and carbon bar charts) are shown in the notebook output.
 
+## Results (Databricks, Spark ML)
+| run | RMSE | MAE | R² | emissions (kg CO2) |
+|---|---|---|---|---|
+| v1_HP-A | 58.96 | 45.48 | 0.622 | 2.3e-05 |
+| v1_HP-B | 58.56 | 45.13 | 0.627 | 1.4e-04 |
+| v2_HP-A | 37.32 | 28.36 | 0.849 | 2.4e-05 |
+| v2_HP-B | 36.75 | 27.96 | 0.853 | 1.8e-04 |
+
 ## Analysis
-- **Feature version matters most.** Adding the other lifts (v2) cuts RMSE from ~58 to ~37 lb and
-  lifts R² from ~0.63 to ~0.86. The feature importance plots show the lifts dominate.
-- **Hyperparameters matter little.** On v1 HP-B is tied with HP-A (RMSE 58.28 vs 58.32). On v2 it is
-  a little better (36.04 vs 36.60, about 1.5%).
-- **Carbon:** HP-B emits about 2 to 3 times more than HP-A (about 2.8x on v2) for that small gain, so
-  whether it is worth it depends on how much accuracy matters. The feature version change from v1 to v2
-  improves RMSE by far more than any hyperparameter change, at a much smaller carbon cost.
-  All runs are tiny in absolute terms (micro-kg CO2).
-- **Caveat:** CodeCarbon estimates energy when it cannot read hardware power. The notebooks use the
-  grid intensity of the USA, so use the values to compare runs, not as absolute figures.
+- **Features matter most.** v2 (with the other lifts) cuts the error from about 58 to about 37 in both
+  tracks.
+- **Hyperparameters matter little.** HP-B (bigger forest) is only slightly better than HP-A.
+- **Bigger forest, more carbon.** HP-B emits about 2 to 3 times more than HP-A locally and about 6 to 7
+  times more on Databricks, for very little gain. HP-A is the better trade-off.
+- **Local vs Databricks.** Results are similar. Databricks errors are slightly higher because Spark ML
+  is not identical to scikit-learn, and its emissions are higher because it runs on different hardware.
+  CodeCarbon values are estimates, so compare runs within one track.
