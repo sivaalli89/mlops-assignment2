@@ -56,10 +56,10 @@ notebook was run several times).
 ## Results (local)
 | run | RMSE | MAE | R² | emissions (kg CO2) |
 |---|---|---|---|---|
-| v1_HP-A | 58.32 | 44.88 | 0.632 | 2.0e-06 |
-| v1_HP-B | 58.28 | 44.93 | 0.632 | 3.8e-06 |
-| v2_HP-A | 36.60 | 27.88 | 0.855 | 3.8e-06 |
-| v2_HP-B | 36.04 | 27.47 | 0.859 | 1.0e-05 |
+| v1_HP-A | 60.70 | 46.10 | 0.610 | 1.4e-06 |
+| v1_HP-B | 60.94 | 46.35 | 0.607 | 1.7e-06 |
+| v2_HP-A | 36.98 | 27.61 | 0.855 | 1.6e-06 |
+| v2_HP-B | 36.86 | 27.49 | 0.856 | 5.3e-06 |
 
 The plots (predicted vs actual, residuals and feature
 importance for each run, plus the RMSE and carbon bar charts) are shown in the notebook output.
@@ -67,17 +67,18 @@ importance for each run, plus the RMSE and carbon bar charts) are shown in the n
 ## Results (Databricks, Spark ML)
 | run | RMSE | MAE | R² | emissions (kg CO2) |
 |---|---|---|---|---|
-| v1_HP-A | 58.96 | 45.48 | 0.622 | 2.3e-05 |
-| v1_HP-B | 58.56 | 45.13 | 0.627 | 1.4e-04 |
-| v2_HP-A | 37.32 | 28.36 | 0.849 | 2.4e-05 |
-| v2_HP-B | 36.75 | 27.96 | 0.853 | 1.8e-04 |
+| v1_HP-A | 59.64 | 45.76 | 0.614 | 4.0e-05 |
+| v1_HP-B | 59.42 | 45.56 | 0.616 | 8.7e-05 |
+| v2_HP-A | 37.61 | 27.96 | 0.846 | 2.2e-05 |
+| v2_HP-B | 37.40 | 27.80 | 0.848 | 1.0e-04 |
 
 ## Analysis
-- **Features matter most.** v2 (with the other lifts) cuts the error from about 58 to about 37 in both
+- **Features matter most.** v2 (with the other lifts) cuts the error from about 60 to about 37 in both
   tracks.
-- **Hyperparameters matter little.** HP-B (bigger forest) is only slightly better than HP-A.
-- **Bigger forest, more carbon.** HP-B emits about 2 to 3 times more than HP-A locally and about 6 to 7
-  times more on Databricks, for very little gain. HP-A is the better trade-off.
+- **Hyperparameters matter little.** HP-B (bigger forest) changes the RMSE by less than 0.3 compared
+  with HP-A.
+- **Bigger forest, more carbon.** HP-B emits about 1.2 to 3.3 times more than HP-A locally and about 2 to
+  5 times more on Databricks, for almost no gain. HP-A is the better trade-off.
 - **Local vs Databricks.** Results are similar. Databricks errors are slightly higher because Spark ML
   is not identical to scikit-learn, and its emissions are higher because it runs on different hardware.
   CodeCarbon values are estimates, so compare runs within one track.
